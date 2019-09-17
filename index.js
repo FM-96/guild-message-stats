@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: `${process.argv[2] || ''}.env`});
 
 const Discord = require('discord.js');
 
@@ -9,6 +9,9 @@ const client = new Discord.Client();
 client.once('ready', async () => {
 	const guild = client.guilds.get(process.env.GUILD_ID);
 	const me = await guild.fetchMember(client.user);
+
+	console.log(`Logged in as ${client.user.tag}`);
+	console.log(`Scanning messages in guild "${guild.name}"`);
 
 	const messages = [];
 	for (const channel of guild.channels.array().filter(e => e.type === 'text' && e.permissionsFor(me).has(Discord.Permissions.FLAGS.VIEW_CHANNEL | Discord.Permissions.FLAGS.READ_MESSAGE_HISTORY))) {
