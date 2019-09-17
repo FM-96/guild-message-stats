@@ -29,9 +29,20 @@ client.once('ready', async () => {
 	}
 	console.log('mapped messages to users');
 
+	let unknownUsers = 0;
+
 	let csvText = 'Username,Tag,User ID,Total Message Count,Days Since First Message,Average Daily Message Count\n';
 	for (const entry of Array.from(userMessagecountMap.entries()).sort((a, b) => b[1].count - a[1].count)) {
-		const author = await client.fetchUser(entry[0]);
+		let author;
+		try {
+			author = await client.fetchUser(entry[0]);
+		} catch (err) {
+			const name = `Unknown User ${String(++unknownUsers).padStart(4, '0')}`;
+			author = {
+				username: name,
+				tag: `${name}#0000`,
+			};
+		}
 		let csvUsername, csvTag;
 		if (author.username.includes(',')) {
 			csvUsername = `"${author.username}"`;
